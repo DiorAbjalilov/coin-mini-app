@@ -5,7 +5,7 @@ import "./index.css";
 
 const App = () => {
   const [points, setPoints] = useState(Number(localStorage.getItem("total")));
-  const [energy, setEnergy] = useState(500);
+  const [energy, setEnergy] = useState(Number(localStorage.getItem("ener")));
   const [clicks, setClicks] = useState<{ id: number; x: number; y: number }[]>(
     [],
   );
@@ -22,6 +22,8 @@ const App = () => {
 
     setPoints(points + pointsToAdd);
     setEnergy(energy - energyToReduce < 0 ? 0 : energy - energyToReduce);
+    let energeyL = energy - energyToReduce < 0 ? 0 : energy - energyToReduce;
+    localStorage.setItem("ener", energeyL.toString());
     setClicks([...clicks, { id: Date.now(), x, y }]);
     let state = points + pointsToAdd;
     localStorage.setItem("total", state.toString());
@@ -34,7 +36,12 @@ const App = () => {
   // useEffect hook to restore energy over time
   useEffect(() => {
     const interval = setInterval(() => {
-      setEnergy((prevEnergy) => Math.min(prevEnergy + 1, 500));
+      setEnergy((prevEnergy) => {
+        let energeyL = Math.min(prevEnergy + 1, 500);
+        localStorage.setItem("ener", energeyL.toString());
+
+        return Math.min(prevEnergy + 1, 500);
+      });
     }, 1000); // Restore 10 energy points every second
     return () => clearInterval(interval); // Clear interval on component unmount
   }, []);
